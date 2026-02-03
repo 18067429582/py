@@ -1,0 +1,22 @@
+name: Build Mac App
+on: [push]
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          pip install requests pyinstaller
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller -F -w --name="GoldPrice" 金价.py
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Mac-App
+          path: dist/GoldPrice.app
