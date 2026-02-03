@@ -1,22 +1,33 @@
-name: Build Mac App
-on: [push]
+name: Build Gold Price App
+
+on: [push, workflow_dispatch]
+
 jobs:
   build:
-    runs-on: macos-latest
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - name: Install dependencies
+
+      - name: Install Dependencies
+        run: pip install requests pyinstaller
+
+      - name: Build Executable
+        shell: bash
         run: |
-          pip install requests pyinstaller
-      - name: Build with PyInstaller
-        run: |
-          pyinstaller -F -w --name="GoldPrice" 金价.py
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+          # 自动寻找当前目录下所有的 .py 文件进行打包，防止名字写错
+          for f in *.py; do pyinstaller -F -w "$f"; done
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v4
         with:
-          name: Mac-App
-          path: dist/GoldPrice.app
+          name: GoldPrice-${{ matrix.os }}
+          path: dist/*
