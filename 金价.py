@@ -1,4 +1,3 @@
-import tk as tk
 import tkinter as tk
 import requests
 import threading
@@ -89,4 +88,5 @@ class GoldDesktopWidget:
 
 if __name__ == "__main__":
     app = GoldDesktopWidget()
+
     app.start()  # 这里的名字要和定义的函数名一致
